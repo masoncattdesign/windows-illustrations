@@ -8,9 +8,12 @@ import { ROOT, green, yellow, dim } from './lib.mjs';
 const INTAKE = path.join(ROOT, 'intake');
 const BUCKETS = ['wds', 'wip', 'guidelines'];
 const VECTOR = new Set(['.svg']);
-const DOC = new Set(['.md', '.pdf', '.docx', '.txt', '.rtf']);
+// Guidelines arrive as whatever they were written in. Deck and board exports
+// are images, and that is a legitimate form for a guideline to take, so they
+// count here even though an image would be flagged in the artwork buckets.
+const DOC = new Set(['.md', '.pdf', '.docx', '.pptx', '.txt', '.rtf', '.png', '.jpg', '.jpeg', '.webp']);
 
-async function walk(dir) {
+async function walk(dir, base = dir) {
   const out = [];
   let entries;
   try {
@@ -21,10 +24,10 @@ async function walk(dir) {
   for (const e of entries) {
     if (e.name.startsWith('.')) continue;
     const full = path.join(dir, e.name);
-    if (e.isDirectory()) out.push(...(await walk(full)));
+    if (e.isDirectory()) out.push(...(await walk(full, base)));
     else if (e.isFile()) {
       const { size } = await stat(full);
-      out.push({ rel: path.relative(INTAKE, full), ext: path.extname(e.name).toLowerCase(), size });
+      out.push({ rel: path.relative(base, full), ext: path.extname(e.name).toLowerCase(), size });
     }
   }
   return out;
