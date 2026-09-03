@@ -1,0 +1,58 @@
+# --- hard boundary: never commit the contents of these ---
+# Git cannot re-include a file whose parent directory is excluded, so these
+# ignore the CONTENTS rather than the directory. The README in each one is the
+# only thing that ships. Verified by scripts/validate.mjs with git check-ignore.
+
+# Raw, unreviewed drops. Material leaves here only via scripts/normalize.mjs.
+intake/*
+!intake/README.md
+!intake/wds/
+!intake/wip/
+!intake/guidelines/
+intake/wds/*
+intake/wip/*
+intake/guidelines/*
+!intake/wds/.gitkeep
+!intake/wip/.gitkeep
+!intake/guidelines/.gitkeep
+
+# Internal Microsoft material. Reference systems, transcripts, unpublished specs.
+private/*
+!private/README.md
+!private/references/
+!private/notes/
+private/references/*
+private/notes/*
+!private/references/.gitkeep
+!private/notes/.gitkeep
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# logs
+*.log
+npm-debug.log*
+
+# tooling
+node_modules/
+dist/
+.cache/
+*.tsbuildinfo
+
+# generated previews (rebuildable)
+.previews/
+
+# common leak shapes for design work
+*.sketch
+*.fig
+~$*
+*.tmp

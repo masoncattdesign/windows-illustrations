@@ -1,0 +1,19 @@
+{
+  "name": "windows-illustrations",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Illustration library for Windows Design Systems. Sibling to expressive-assets.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "manifest": "node scripts/manifest.mjs",
+    "validate": "node scripts/validate.mjs",
+    "normalize": "node scripts/normalize.mjs",
+    "intake:report": "node scripts/intake-report.mjs",
+    "check": "npm run manifest && npm run validate"
+  },
+  "author": "Mason Catt",
+  "license": "MIT"
+}
