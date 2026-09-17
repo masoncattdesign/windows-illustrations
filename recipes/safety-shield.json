@@ -1,0 +1,23 @@
+{
+  "slug": "safety-shield",
+  "concept": "safety",
+  "label": "Protection",
+  "note": "The plain statement. Base at loud so it holds its own silhouette on both surfaces, shield in paper contained inside it.",
+  "base": {
+    "part": "circle-64",
+    "tone": "blue.loud",
+    "elevation": [
+      "rim"
+    ]
+  },
+  "secondary": [
+    {
+      "part": "shield",
+      "tone": "grey.paper",
+      "scale": 0.72,
+      "elevation": [
+        "cast"
+      ]
+    }
+  ]
+}

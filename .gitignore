@@ -56,3 +56,10 @@ dist/
 *.fig
 ~$*
 *.tmp
+
+# generated output. rebuildable with scripts/compose.mjs, pack-builder.mjs, build-tool.mjs
+build/
+
+# local scratch. never ships
+_to_delete/
+Claude outputs/

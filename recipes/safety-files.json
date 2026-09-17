@@ -1,0 +1,33 @@
+{
+  "slug": "safety-files",
+  "concept": "safety",
+  "label": "Protected files",
+  "note": "Folder carries the metaphor, shield modifies it. Folder is scaled to stay inside the base rather than overhanging it.",
+  "base": {
+    "part": "rect-64x48",
+    "tone": "blue.loud",
+    "elevation": [
+      "rim"
+    ]
+  },
+  "secondary": [
+    {
+      "part": "folder",
+      "tone": "grey.paper",
+      "scale": 0.66,
+      "x": -4,
+      "y": -2,
+      "elevation": [
+        "cast"
+      ]
+    },
+    {
+      "part": "shield",
+      "tone": "blue.heavy",
+      "anchor": "br",
+      "elevation": [
+        "cast"
+      ]
+    }
+  ]
+}

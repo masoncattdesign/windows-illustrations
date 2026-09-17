@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Windows Illustration Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --rail:#FAFAFB; --stage:#F6F7F9; --line:#E4E7EC; --line-2:#EFF1F4;
+  --ink:#16181D; --ink-2:#5A616B; --ink-3:#8A919C;
+  --accent:#2561CE; --accent-soft:#E8F0FE;
+  --ok-bg:#E3F5E9; --ok-ink:#1F6236; --bad-bg:#FDE8E6; --bad-ink:#8C2A20;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font-family:"Public Sans",-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;
+ -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+button,select,input{font:inherit;color:inherit}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+
+header{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);flex:none}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.mark{width:26px;height:26px;border-radius:7px;background:var(--accent);display:grid;place-items:center}
+.mark svg{width:14px;height:14px}
+header .sp{flex:1}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 13px;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--ink-3)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:inline-flex;background:var(--stage);border-radius:9px;padding:3px;gap:2px}
+.seg button{border:0;background:none;border-radius:7px;padding:6px 13px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+.seg button[aria-pressed=true]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+main{flex:1;display:grid;grid-template-columns:288px 1fr 300px;min-height:0}
+.rail{overflow-y:auto;padding:18px;background:var(--rail)}
+.rail.l{border-right:1px solid var(--line)}
+.rail.r{border-left:1px solid var(--line)}
+.stage{display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.stagebar{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line-2)}
+.stagebar .sp{flex:1}
+.canvaswrap{flex:1;display:grid;place-items:center;padding:24px;min-height:0;background:var(--stage)}
+.canvas{width:min(100%,380px);aspect-ratio:1;border-radius:16px;display:grid;place-items:center;padding:26px}
+.canvas svg{width:100%;height:100%;display:block}
+.ramp{display:flex;gap:20px;align-items:flex-end;justify-content:center;padding:14px 18px 20px;border-top:1px solid var(--line-2)}
+.ramp figure{margin:0;text-align:center}
+.ramp .box{border-radius:10px;display:grid;place-items:center}
+.ramp figcaption{margin-top:6px;font-size:10px;color:var(--ink-3)}
+
+h3{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+ margin:0 0 9px;font-weight:500;font-family:"JetBrains Mono",monospace}
+h3:not(:first-child){margin-top:24px}
+#editor h3:first-child{margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+label.f{display:block;margin-bottom:10px}
+label.f span{display:block;font-size:11px;color:var(--ink-2);margin-bottom:4px}
+input[type=text],select{width:100%;border:1px solid var(--line);border-radius:8px;
+ padding:7px 9px;background:#fff;font-size:13px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.hint{font-size:11.5px;color:var(--ink-3);line-height:1.45;margin:6px 0 0}
+
+.layers{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.layer{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;
+ border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 9px;cursor:pointer;text-align:left}
+.layer[aria-selected=true]{border-color:var(--accent);background:var(--accent-soft)}
+.layer .sw{width:20px;height:20px;border-radius:5px;border:1px solid rgba(0,0,0,.12)}
+.layer .nm{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layer .nm em{font-style:normal;color:var(--ink-3);font-size:10.5px;display:block;font-family:"JetBrains Mono",monospace}
+.layer .x{border:0;background:none;color:var(--ink-3);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px}
+.layer .x:hover{color:var(--bad-ink)}
+
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tabs button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;
+ padding:6px 4px;font-size:11.5px;cursor:pointer;color:var(--ink-2)}
+.tabs button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.palette{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px;cursor:pointer;
+ display:flex;flex-direction:column;align-items:center;gap:4px}
+.chip:hover{border-color:var(--accent)}
+.chip svg{width:100%;height:auto;aspect-ratio:1;color:var(--ink-2)}
+.chip span{font-size:9px;color:var(--ink-3);font-family:"JetBrains Mono",monospace;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.tones{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.tone{display:block;width:100%;height:32px;border-radius:7px;border:1px solid rgba(0,0,0,.12);cursor:pointer;padding:0}
+.tone[aria-pressed=true]{outline:2px solid var(--accent);outline-offset:1px}
+.tonelab{font-size:9px;color:var(--ink-3);text-align:center;margin-top:2px;font-family:"JetBrains Mono",monospace}
+.fx{display:flex;flex-wrap:wrap;gap:5px}
+.fx button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 11px;
+ font-size:11px;cursor:pointer;color:var(--ink-2);font-family:"JetBrains Mono",monospace}
+.fx button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.check{border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.45;margin-top:8px}
+.check.ok{background:var(--ok-bg);color:var(--ok-ink)}
+.check.bad{background:var(--bad-bg);color:var(--bad-ink)}
+.check b{display:block;font-family:"JetBrains Mono",monospace;font-size:10px;
+ letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;opacity:.8}
+textarea{width:100%;height:150px;border:1px solid var(--line);border-radius:9px;padding:9px;
+ font-family:"JetBrains Mono",monospace;font-size:10.5px;background:#fff;resize:vertical}
+@media (max-width:1100px){
+  main{grid-template-columns:1fr;overflow-y:auto}
+  .rail.l,.rail.r{border:0;border-bottom:1px solid var(--line)}
+  body{overflow:auto}
+}
+</style></head><body>
+
+<header>
+  <div class="brand">
+    <span class="mark"><svg viewBox="0 0 24 24" fill="#fff"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></span>
+    Windows Illustration Builder
+  </div>
+  <div class="sp"></div>
+  <button class="btn" id="b-recipe">Copy recipe</button>
+  <button class="btn pri" id="b-svg">Export SVG</button>
+</header>
+
+<main>
+  <section class="rail l">
+    <h3>Asset</h3>
+    <label class="f"><span>Name</span><input type="text" id="f-name" value="Safety"></label>
+    <p class="hint" id="f-slug"></p>
+
+    <h3>Layers</h3>
+    <div class="layers" id="layers"></div>
+    <p class="hint">Base sits at the bottom. Pick a layer to edit it, or pick a shape on the right to add one.</p>
+
+    <div id="editor"></div>
+  </section>
+
+  <section class="stage">
+    <div class="stagebar">
+      <div class="seg" role="group" aria-label="Ground">
+        <button id="g-light" aria-pressed="true">Light</button>
+        <button id="g-dark" aria-pressed="false">Dark</button>
+      </div>
+      <div class="sp"></div>
+      <span class="mono" style="font-size:11px;color:var(--ink-3)" id="meta"></span>
+    </div>
+    <div class="canvaswrap"><div class="canvas" id="canvas"></div></div>
+    <div class="ramp" id="ramp"></div>
+  </section>
+
+  <section class="rail r">
+    <h3>Shapes</h3>
+    <div class="tabs" id="tabs"></div>
+    <div class="palette" id="palette"></div>
+    <p class="hint" id="palhint"></p>
+
+    <h3>Checks</h3>
+    <div id="checks"></div>
+  </section>
+</main>
+
+<script>
+/*__DATA__*/
+
+/* ---------- composition, the same grammar as scripts/compose.mjs ---------- */
+const round = n => Math.round(n * 1000) / 1000;
+function toneHex(ref){
+  if(!ref) return 'currentColor';
+  if(ref[0] === '#') return ref;
+  const [f, s] = ref.split('.');
+  return (TOKENS.tone[f] && TOKENS.tone[f][s]) || '#FF00FF';
+}
+function partBody(tier, slug){
+  const p = PARTS[tier] && PARTS[tier][slug];
+  return p ? p.body : '';
+}
+function place(body, lay, fill){
+  const c = TOKENS.partCanvas / 2, k = TOKENS.canvas / TOKENS.partCanvas;
+  const tx = (lay.x + c) * k, ty = (lay.y + c) * k;
+  return '<g transform="translate(' + round(tx) + ' ' + round(ty) + ') scale(' +
+    round(k * lay.scale) + ') translate(' + (-c) + ' ' + (-c) + ')" color="' + fill + '">' + body + '</g>';
+}
+function fxDefs(names){
+  return names.map(n => {
+    const e = TOKENS.elevation[n]; if(!e) return '';
+    if(e.type === 'drop'){
+      return '<filter id="fx-' + n + '" x="-40%" y="-40%" width="180%" height="180%">' +
+        '<feDropShadow dx="' + e.dx + '" dy="' + e.dy + '" stdDeviation="' + (e.blur/2) +
+        '" flood-color="' + e.color + '" flood-opacity="' + e.opacity + '"/></filter>';
+    }
+    return '<filter id="fx-' + n + '" x="-40%" y="-40%" width="180%" height="180%">' +
+      '<feOffset dx="' + e.dx + '" dy="' + e.dy + '" in="SourceAlpha" result="o"/>' +
+      '<feGaussianBlur stdDeviation="' + (e.blur/2) + '" in="o" result="b"/>' +
+      '<feComposite operator="out" in="SourceAlpha" in2="b" result="inv"/>' +
+      '<feFlood flood-color="' + e.color + '" flood-opacity="' + e.opacity + '" result="c"/>' +
+      '<feComposite operator="in" in="c" in2="inv" result="s"/>' +
+      '<feComposite operator="atop" in="s" in2="SourceGraphic"/></filter>';
+  }).join('');
+}
+function layoutOf(L){
+  if(L.anchor && TOKENS.layout.anchors[L.anchor]){
+    const a = TOKENS.layout.anchors[L.anchor];
+    return { scale: L.scale != null ? L.scale : TOKENS.layout.modifier.scale,
+             x: L.x != null ? L.x : a[0], y: L.y != null ? L.y : a[1] };
+  }
+  const base = TOKENS.layout[L.layout] || TOKENS.layout.solo;
+  return { scale: L.scale != null ? L.scale : base.scale,
+           x: L.x != null ? L.x : base.x, y: L.y != null ? L.y : base.y };
+}
+function compose(st){
+  const used = new Set(), out = [];
+  const draw = (tier, L) => {
+    let g = place(partBody(tier, L.part), layoutOf(L), toneHex(L.tone));
+    if(L.elevation && L.elevation.length){
+      L.elevation.forEach(n => used.add(n));
+      g = '<g filter="' + L.elevation.map(n => 'url(#fx-' + n + ')').join(' ') + '">' + g + '</g>';
+    }
+    out.push(g);
+  };
+  if(st.base) draw('base', st.base);
+  st.layers.forEach(L => draw(L.tier, L));
+  const defs = fxDefs([...used]);
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + TOKENS.canvas + ' ' + TOKENS.canvas +
+    '" fill="none" role="img" aria-label="' + esc(st.name) + '">' +
+    (defs ? '<defs>' + defs + '</defs>' : '') + out.join('') + '</svg>';
+}
+const esc = s => String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+const slugify = s => String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'untitled';
+
+/* ---------- the surfaces rule, live ---------- */
+const SURF = { light:'#F3F3F3', dark:'#202020' };
+const lin = c => { c/=255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); };
+const lum = h => 0.2126*lin(parseInt(h.substr(1,2),16))+0.7152*lin(parseInt(h.substr(3,2),16))+0.0722*lin(parseInt(h.substr(5,2),16));
+const cr = (a,b) => { const x=lum(a), y=lum(b); const hi=Math.max(x,y), lo=Math.min(x,y); return (hi+0.05)/(lo+0.05); };
+function checkSurfaces(st){
+  const outer = st.base || st.layers[0];
+  if(!outer) return null;
+  const hex = toneHex(outer.tone);
+  if(hex[0] !== '#') return null;
+  const l = cr(hex, SURF.light), d = cr(hex, SURF.dark);
+  return { part: outer.part, tone: outer.tone, l, d, pass: l >= 3 && d >= 3 };
+}
+
+/* ---------- state ---------- */
+const S = {
+  name: 'Safety',
+  ground: 'light',
+  tab: 'secondary',
+  sel: -1,
+  base: { part:'circle-64', tone:'blue.loud', elevation:['rim'] },
+  layers: [ { tier:'secondary', part:'shield', tone:'grey.paper', layout:'solo', scale:0.72, elevation:['cast'] } ]
+};
+const $ = id => document.getElementById(id);
+const selLayer = () => S.sel === -1 ? S.base : S.layers[S.sel];
+
+/* ---------- render ---------- */
+function renderCanvas(){
+  const svg = compose(S);
+  const ground = S.ground === 'light' ? '#F3F3F3' : '#202020';
+  $('canvas').style.background = ground;
+  $('canvas').innerHTML = svg;
+  $('meta').textContent = slugify(S.name) + '.svg · ' + TOKENS.canvas + ' canvas · ' + (S.layers.length + (S.base?1:0)) + ' layers';
+  $('f-slug').textContent = 'Slug: ' + slugify(S.name);
+  const sizes = [
+    { px: 160, label: '512' }, { px: 92, label: '256' }, { px: 44, label: '64' }
+  ];
+  $('ramp').innerHTML = sizes.map(s =>
+    '<figure><div class="box" style="width:' + s.px + 'px;height:' + s.px + 'px;background:' + ground +
+    ';padding:' + Math.round(s.px*0.07) + 'px">' + svg + '</div><figcaption>' + s.label + '</figcaption></figure>'
+  ).join('');
+}
+function renderLayers(){
+  const row = (L, i, tier) => {
+    const on = S.sel === i;
+    return '<div class="layer" role="button" tabindex="0" aria-selected="' + on + '" data-i="' + i + '">' +
+      '<span class="sw" style="background:' + toneHex(L.tone) + '"></span>' +
+      '<span class="nm">' + L.part.replace(/-/g,' ') + '<em>' + tier + ' · ' + L.tone + '</em></span>' +
+      (i === -1 ? '<span></span>' : '<button class="x" data-del="' + i + '" title="Remove">&times;</button>') +
+      '</div>';
+  };
+  let h = '';
+  for(let i = S.layers.length - 1; i >= 0; i--) h += row(S.layers[i], i, S.layers[i].tier);
+  if(S.base) h += row(S.base, -1, 'base');
+  $('layers').innerHTML = h;
+  $('layers').querySelectorAll('.layer').forEach(el => {
+    el.addEventListener('click', e => {
+      if(e.target.dataset.del !== undefined) return;
+      S.sel = +el.dataset.i; render();
+    });
+  });
+  $('layers').querySelectorAll('[data-del]').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      S.layers.splice(+b.dataset.del, 1);
+      if(S.sel >= S.layers.length) S.sel = -1;
+      render();
+    });
+  });
+}
+function renderEditor(){
+  const L = selLayer();
+  if(!L){ $('editor').innerHTML = ''; return; }
+  const isBase = S.sel === -1;
+  const fams = Object.keys(TOKENS.tone);
+  const [fam, step] = L.tone.split('.');
+  const steps = Object.keys(TOKENS.tone[fam] || {});
+  const placements = ['solo','lead','modifier'];
+  const anchors = Object.keys(TOKENS.layout.anchors);
+  const fx = Object.keys(TOKENS.elevation);
+
+  $('editor').innerHTML =
+    '<h3>' + (isBase ? 'Base' : 'Layer') + ' &middot; ' + L.part.replace(/-/g,' ') + '</h3>' +
+    '<label class="f"><span>Tone family</span><select id="e-fam">' +
+      fams.map(f => '<option' + (f===fam?' selected':'') + '>' + f + '</option>').join('') + '</select></label>' +
+    '<div class="tones" id="e-steps">' + steps.map(s =>
+      '<div><button class="tone" data-step="' + s + '" aria-pressed="' + (s===step) +
+      '" style="background:' + TOKENS.tone[fam][s] + '" title="' + s + '"></button>' +
+      '<div class="tonelab">' + s + '</div></div>').join('') + '</div>' +
+    (isBase ? '' :
+      '<label class="f" style="margin-top:18px"><span>Placement</span><select id="e-place">' +
+        placements.map(p => '<option value="' + p + '"' + (L.layout===p && !L.anchor ? ' selected':'') + '>' + p + '</option>').join('') +
+        anchors.map(a => '<option value="@' + a + '"' + (L.anchor===a?' selected':'') + '>anchor ' + a + '</option>').join('') +
+      '</select></label>' +
+      '<label class="f"><span>Scale &middot; <span class="mono" id="e-sv">' + (L.scale != null ? L.scale : 1).toFixed(2) + '</span></span>' +
+      '<input type="range" id="e-scale" min="0.2" max="1.2" step="0.02" value="' + (L.scale != null ? L.scale : 1) + '"></label>') +
+    '<h3>Elevation</h3><div class="fx" id="e-fx">' +
+      fx.map(n => '<button data-fx="' + n + '" aria-pressed="' + ((L.elevation||[]).includes(n)) + '">' + n + '</button>').join('') +
+    '</div>';
+
+  const fe = $('e-fam');
+  if(fe) fe.addEventListener('change', () => {
+    const f = fe.value, ks = Object.keys(TOKENS.tone[f]);
+    L.tone = f + '.' + (TOKENS.tone[f][step] ? step : ks[Math.min(2, ks.length-1)]);
+    render();
+  });
+  $('e-steps').querySelectorAll('[data-step]').forEach(b =>
+    b.addEventListener('click', () => { L.tone = fam + '.' + b.dataset.step; render(); }));
+  const pe = $('e-place');
+  if(pe) pe.addEventListener('change', () => {
+    const v = pe.value;
+    if(v[0] === '@'){ L.anchor = v.slice(1); delete L.layout; }
+    else { L.layout = v; delete L.anchor; }
+    delete L.x; delete L.y; render();
+  });
+  const se = $('e-scale');
+  if(se) se.addEventListener('input', () => { L.scale = +se.value; $('e-sv').textContent = (+se.value).toFixed(2); renderCanvas(); });
+  $('e-fx').querySelectorAll('[data-fx]').forEach(b =>
+    b.addEventListener('click', () => {
+      const n = b.dataset.fx;
+      L.elevation = L.elevation || [];
+      const i = L.elevation.indexOf(n);
+      if(i >= 0) L.elevation.splice(i,1); else L.elevation.push(n);
+      render();
+    }));
+}
+function renderPalette(){
+  const tiers = Object.keys(PARTS).filter(t => Object.keys(PARTS[t]).length);
+  $('tabs').innerHTML = tiers.map(t =>
+    '<button data-tab="' + t + '" aria-pressed="' + (S.tab===t) + '">' + t + ' (' + Object.keys(PARTS[t]).length + ')</button>').join('');
+  $('tabs').querySelectorAll('[data-tab]').forEach(b =>
+    b.addEventListener('click', () => { S.tab = b.dataset.tab; render(); }));
+
+  const list = PARTS[S.tab] || {};
+  $('palette').innerHTML = Object.keys(list).map(slug =>
+    '<button class="chip" data-part="' + slug + '" title="' + slug + '">' +
+    '<svg viewBox="0 0 80 80" fill="none">' + list[slug].body + '</svg>' +
+    '<span>' + slug + '</span></button>').join('');
+  $('palette').querySelectorAll('[data-part]').forEach(b =>
+    b.addEventListener('click', () => {
+      const slug = b.dataset.part;
+      if(S.tab === 'base'){ S.base = S.base || {}; S.base.part = slug; S.sel = -1; }
+      else {
+        S.layers.push({ tier:S.tab, part:slug, tone:'blue.heavy',
+                        layout: S.layers.length ? 'modifier' : 'solo',
+                        anchor: S.layers.length ? 'br' : undefined,
+                        elevation:['cast'] });
+        S.sel = S.layers.length - 1;
+      }
+      render();
+    }));
+  $('palhint').textContent = S.tab === 'base'
+    ? 'Picking a base replaces the current one. The base carries the silhouette.'
+    : 'Picking a shape adds it as a new layer on top.';
+}
+function renderChecks(){
+  const c = checkSurfaces(S);
+  if(!c){ $('checks').innerHTML = '<div class="check bad"><b>empty</b>Nothing composed yet.</div>'; return; }
+  const cls = c.pass ? 'ok' : 'bad';
+  const msg = c.pass
+    ? 'The outermost shape clears 3:1 on both Windows surfaces, so this holds its silhouette either way.'
+    : (c.l < 3 && c.d < 3 ? 'The outermost shape fails on both surfaces. Outline it, contain it, or demote it.'
+      : c.l < 3 ? 'The outermost shape disappears on light surfaces. Outline it, contain it, or demote it.'
+      : 'The outermost shape disappears on dark surfaces. Outline it, contain it, or demote it.');
+  $('checks').innerHTML =
+    '<div class="check ' + cls + '"><b>surfaces &middot; ' + (c.pass ? 'pass' : 'fail') + '</b>' + msg + '</div>' +
+    '<div class="hint mono" style="margin-top:8px">' + c.part + ' &middot; ' + c.tone +
+    '<br>light ' + c.l.toFixed(2) + ' &middot; dark ' + c.d.toFixed(2) + '</div>';
+}
+function render(){ renderCanvas(); renderLayers(); renderEditor(); renderPalette(); renderChecks(); }
+
+/* ---------- chrome ---------- */
+$('f-name').addEventListener('input', e => { S.name = e.target.value; renderCanvas(); });
+$('g-light').addEventListener('click', () => { S.ground='light'; setGround(); });
+$('g-dark').addEventListener('click', () => { S.ground='dark'; setGround(); });
+function setGround(){
+  $('g-light').setAttribute('aria-pressed', S.ground==='light');
+  $('g-dark').setAttribute('aria-pressed', S.ground==='dark');
+  renderCanvas();
+}
+function recipe(){
+  const r = { slug: slugify(S.name), label: S.name, base: S.base, secondary: [], tertiary: [] };
+  S.layers.forEach(L => {
+    const o = { part:L.part, tone:L.tone };
+    if(L.layout) o.layout = L.layout;
+    if(L.anchor) o.anchor = L.anchor;
+    if(L.scale != null) o.scale = L.scale;
+    if(L.elevation && L.elevation.length) o.elevation = L.elevation;
+    (L.tier === 'tertiary' ? r.tertiary : r.secondary).push(o);
+  });
+  if(!r.tertiary.length) delete r.tertiary;
+  return JSON.stringify(r, null, 2);
+}
+$('b-recipe').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(recipe()); flash($('b-recipe'), 'Copied'); }
+  catch(e){ window.prompt('Recipe JSON', recipe()); }
+});
+$('b-svg').addEventListener('click', () => {
+  const blob = new Blob([compose(S)], { type:'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = slugify(S.name) + '.svg';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+function flash(btn, txt){ const o = btn.textContent; btn.textContent = txt; setTimeout(() => btn.textContent = o, 1200); }
+
+render();
+</script>
+</body></html>

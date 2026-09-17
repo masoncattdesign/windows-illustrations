@@ -1,0 +1,105 @@
+{
+  "canvas": 80,
+  "safeArea": 64,
+  "margin": 8,
+  "gridStep": 8,
+  "parts": {
+    "base": [
+      {
+        "slug": "rect-64x48",
+        "label": "Base rectangle 64x48"
+      },
+      {
+        "slug": "rect-48x48",
+        "label": "Base rectangle 48x48"
+      },
+      {
+        "slug": "rect-56x40",
+        "label": "Base rectangle 56x40"
+      },
+      {
+        "slug": "circle-64",
+        "label": "Base circle large 64"
+      },
+      {
+        "slug": "circle-48",
+        "label": "Base circle medium 48"
+      },
+      {
+        "slug": "chat-box",
+        "label": "Base chat box"
+      },
+      {
+        "slug": "triangle-64",
+        "label": "Base triangle large 64"
+      }
+    ],
+    "secondary": [
+      {
+        "slug": "cursor",
+        "label": "Cursor"
+      },
+      {
+        "slug": "shield",
+        "label": "Shield"
+      },
+      {
+        "slug": "pin",
+        "label": "Pin"
+      },
+      {
+        "slug": "battery",
+        "label": "Battery"
+      },
+      {
+        "slug": "gear",
+        "label": "Gear"
+      },
+      {
+        "slug": "bell",
+        "label": "Bell"
+      },
+      {
+        "slug": "arrow-up",
+        "label": "Arrow up"
+      },
+      {
+        "slug": "arrow-down",
+        "label": "Arrow down"
+      },
+      {
+        "slug": "folder",
+        "label": "Folder"
+      },
+      {
+        "slug": "chat-bubble",
+        "label": "Chat bubble"
+      },
+      {
+        "slug": "ribbon",
+        "label": "Ribbon"
+      },
+      {
+        "slug": "document",
+        "label": "Document, folded corner"
+      },
+      {
+        "slug": "ticket",
+        "label": "Ticket"
+      },
+      {
+        "slug": "arched-rect",
+        "label": "Arched rectangle"
+      },
+      {
+        "slug": "cuff",
+        "label": "Cuff"
+      },
+      {
+        "slug": "speaker",
+        "label": "Speaker"
+      }
+    ],
+    "tertiary": []
+  }
+}

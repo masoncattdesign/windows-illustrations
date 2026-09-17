@@ -1,0 +1,24 @@
+{
+  "slug": "safety-message",
+  "concept": "safety",
+  "label": "Private conversation",
+  "note": "Chat box as the ground so the base carries meaning too. Loud clears both surfaces.",
+  "base": {
+    "part": "chat-box",
+    "tone": "blue.loud",
+    "elevation": [
+      "rim"
+    ]
+  },
+  "secondary": [
+    {
+      "part": "shield",
+      "tone": "grey.paper",
+      "scale": 0.52,
+      "y": -4,
+      "elevation": [
+        "cast"
+      ]
+    }
+  ]
+}
