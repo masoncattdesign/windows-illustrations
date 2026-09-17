@@ -124,3 +124,26 @@ up here that the icon side already answered, follow the icon side rather than
 inventing a parallel term. `glyph` and `emblem` are settled words there. The
 illustration anatomy vocabulary is still open (see `schema/anatomy.md`) and
 needs Ada and Sihan's input before it hardens.
+
+## Relationship to the M365 illustration system
+
+The M365 illustration system (Fluent x CAP) is being built at the same time as
+this one. It is a peer, not a parent, and not a specification.
+
+The stance, from Mason:
+
+- **This is evolution, not revolution.** The Windows illustration style keeps
+  moving on its own track. We are not restarting it to match someone else.
+- **M365 informs our direction, it does not set it.** Take their thinking where
+  it genuinely helps. Do not adopt a decision just because they made it.
+- **The goal is that the two systems work together.** Shared vocabulary, shared
+  color reasoning, and compatible contracts are worth real effort. A shared
+  visual style is not the goal, and their look (flat, outlined, offset block
+  shadow) is not ours.
+
+Practical test for any M365 borrowing: does it change what a Windows
+illustration looks like, or only what we call its parts and how they are
+tagged? Vocabulary, tagging, and structure travel freely. Visual style does not.
+
+Analysis of their system, and of the deprecated Fluent style, lives in
+`private/references/`. It is written as comparison, not as a plan to adopt.
