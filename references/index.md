@@ -2,7 +2,7 @@
 
 | System | Access | Entry | Reviewed |
 |---|---|---|---|
-| _nothing filed yet_ | | | |
+| Microsoft Fluent illustration style | public | [microsoft-fluent-illustration.md](microsoft-fluent-illustration.md) | 2026-09-17 |
 
 Internal Microsoft systems are filed under `private/references/` and are listed
 here by name only, with no entry link, once they exist.
