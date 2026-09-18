@@ -68,3 +68,4 @@ Claude outputs/
 corpus/
 corpus-real/*
 !corpus-real/README.md
+!corpus-real/TRAINING.md
