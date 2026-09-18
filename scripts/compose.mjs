@@ -9,6 +9,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname, basename } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const ROOT = join(dirname(new URL(import.meta.url).pathname), '..');
 const T = JSON.parse(readFileSync(join(ROOT, 'schema/tokens.json'), 'utf8'));
@@ -147,8 +148,12 @@ export function compose(recipe) {
 }
 const esc = s => String(s).replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 
+// Only act as a CLI when this file IS the program. Without this guard, anything
+// that imports compose() also runs the command line block against its own argv,
+// which is how scripts/corpus.mjs first tried to open a file called "--limit".
+const isEntry = process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url;
 const args = process.argv.slice(2);
-if (args.length) {
+if (isEntry && args.length) {
   const oi = args.indexOf('--out');
   const out = oi >= 0 ? args[oi + 1] : 'build';
   const files = (oi >= 0 ? args.slice(0, oi) : args);

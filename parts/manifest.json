@@ -13,8 +13,7 @@
       {
         "slug": "chat-box",
         "label": "Base chat box",
-        "shape": "chat-box",
-        "size": "lg"
+        "shape": "chat-box"
       },
       {
         "slug": "circle-lg",

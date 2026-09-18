@@ -63,3 +63,6 @@ build/
 # local scratch. never ships
 _to_delete/
 Claude outputs/
+
+# generated training corpus, large and rebuildable
+corpus/
