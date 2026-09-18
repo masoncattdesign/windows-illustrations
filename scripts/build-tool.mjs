@@ -28,7 +28,15 @@ for (const tier of TIERS) {
     if (!m) continue;
     const body = m[1].replace(/\s+/g, ' ').trim();
     if (!body) continue;
-    parts[tier][slug] = { body };
+    // shape and size travel with the part so the palette can group by shape and
+    // offer size as a control, instead of listing three chips per silhouette.
+    const head = src.slice(0, src.indexOf('>') + 1);
+    const at = (n) => (head.match(new RegExp(`${n}="([^"]*)"`)) || [])[1];
+    const rec = { body };
+    const shape = at('data-shape'), size = at('data-size');
+    if (shape) rec.shape = shape;
+    if (size) rec.size = size;
+    parts[tier][slug] = rec;
     count++;
   }
 }

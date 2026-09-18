@@ -4,7 +4,8 @@
   "label": "Protected files",
   "note": "Folder carries the metaphor, shield modifies it. Folder is scaled to stay inside the base rather than overhanging it.",
   "base": {
-    "part": "rect-64x48",
+    "part": "rect",
+    "size": "lg",
     "tone": "blue.loud",
     "elevation": [
       "rim"

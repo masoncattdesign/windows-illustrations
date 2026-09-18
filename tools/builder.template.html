@@ -28,6 +28,11 @@ header .sp{flex:1}
 .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 13px;font-size:13px;cursor:pointer}
 .btn:hover{border-color:var(--ink-3)}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.ghost{padding:6px 12px;font-size:12px;color:var(--ink-2)}
+.btn.ghost[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.seg.wide{display:grid;grid-template-columns:repeat(3,1fr);width:100%}
+.seg.wide button{padding:6px 4px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.seg.wide button em{font-style:normal;font-size:9.5px;opacity:.6;font-family:"JetBrains Mono",monospace}
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .seg{display:inline-flex;background:var(--stage);border-radius:9px;padding:3px;gap:2px}
 .seg button{border:0;background:none;border-radius:7px;padding:6px 13px;font-size:13px;cursor:pointer;color:var(--ink-2)}
@@ -41,7 +46,9 @@ main{flex:1;display:grid;grid-template-columns:288px 1fr 300px;min-height:0}
 .stagebar{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line-2)}
 .stagebar .sp{flex:1}
 .canvaswrap{flex:1;display:grid;place-items:center;padding:24px;min-height:0;background:var(--stage)}
-.canvas{width:min(100%,380px);aspect-ratio:1;border-radius:16px;display:grid;place-items:center;padding:26px}
+.canvas{position:relative;width:min(100%,380px);aspect-ratio:1;border-radius:16px;display:grid;place-items:center;padding:26px}
+.canvas .grid{position:absolute;inset:26px;width:auto;height:auto;pointer-events:none}  /* width:auto matters: the generic .canvas svg rule sets width:100%, which would
+     measure against the padding box and push the grid out of register with the asset. */
 .canvas svg{width:100%;height:100%;display:block}
 .ramp{display:flex;gap:20px;align-items:flex-end;justify-content:center;padding:14px 18px 20px;border-top:1px solid var(--line-2)}
 .ramp figure{margin:0;text-align:center}
@@ -132,6 +139,7 @@ textarea{width:100%;height:150px;border:1px solid var(--line);border-radius:9px;
         <button id="g-light" aria-pressed="true">Light</button>
         <button id="g-dark" aria-pressed="false">Dark</button>
       </div>
+      <button class="btn ghost" id="g-grid" aria-pressed="false" title="Show the 80 canvas, the 64 safe area and the 8 grid">Grid</button>
       <div class="sp"></div>
       <span class="mono" style="font-size:11px;color:var(--ink-3)" id="meta"></span>
     </div>
@@ -154,6 +162,9 @@ textarea{width:100%;height:150px;border:1px solid var(--line);border-radius:9px;
 /*__DATA__*/
 
 /* ---------- composition, the same grammar as scripts/compose.mjs ---------- */
+// A layer names a shape and a size separately, so partSlug joins them back
+// into the file on disk. Parts with no size (every secondary shape) pass through.
+const partSlug = L => L.size ? L.part + '-' + L.size : L.part;
 const round = n => Math.round(n * 1000) / 1000;
 function toneHex(ref){
   if(!ref) return 'currentColor';
@@ -201,7 +212,7 @@ function layoutOf(L){
 function compose(st){
   const used = new Set(), out = [];
   const draw = (tier, L) => {
-    let g = place(partBody(tier, L.part), layoutOf(L), toneHex(L.tone));
+    let g = place(partBody(tier, partSlug(L)), layoutOf(L), toneHex(L.tone));
     if(L.elevation && L.elevation.length){
       L.elevation.forEach(n => used.add(n));
       g = '<g filter="' + L.elevation.map(n => 'url(#fx-' + n + ')').join(' ') + '">' + g + '</g>';
@@ -229,7 +240,7 @@ function checkSurfaces(st){
   const hex = toneHex(outer.tone);
   if(hex[0] !== '#') return null;
   const l = cr(hex, SURF.light), d = cr(hex, SURF.dark);
-  return { part: outer.part, tone: outer.tone, l, d, pass: l >= 3 && d >= 3 };
+  return { part: partSlug(outer), tone: outer.tone, l, d, pass: l >= 3 && d >= 3 };
 }
 
 /* ---------- state ---------- */
@@ -238,18 +249,41 @@ const S = {
   ground: 'light',
   tab: 'secondary',
   sel: -1,
-  base: { part:'circle-64', tone:'blue.loud', elevation:['rim'] },
+  grid: false,
+  base: { part:'circle', size:'lg', tone:'blue.loud', elevation:['rim'] },
   layers: [ { tier:'secondary', part:'shield', tone:'grey.paper', layout:'solo', scale:0.72, elevation:['cast'] } ]
 };
 const $ = id => document.getElementById(id);
 const selLayer = () => S.sel === -1 ? S.base : S.layers[S.sel];
+
+/* ---------- shape groups ----------
+ * The palette lists silhouettes, not files. circle-lg / circle-md / circle-sm
+ * are one entry called circle with a size control, which is the whole point of
+ * generating the base set: size stopped being a different shape. */
+function groupsIn(tier){
+  const list = PARTS[tier] || {};
+  const out = new Map();
+  for(const slug of Object.keys(list)){
+    const p = list[slug], key = p.shape || slug;
+    if(!out.has(key)) out.set(key, { shape:key, sizes:{}, plain:null });
+    if(p.size) out.get(key).sizes[p.size] = slug; else out.get(key).plain = slug;
+  }
+  return out;
+}
+const SIZE_ORDER = ['lg','md','sm'];
+function sizesFor(tier, shape){
+  const g = groupsIn(tier).get(shape);
+  return g ? SIZE_ORDER.filter(k => g.sizes[k]) : [];
+}
+// the chip shows the biggest variant, so shapes are compared at the same scale
+function previewSlug(g){ return g.plain || g.sizes.lg || g.sizes[Object.keys(g.sizes)[0]]; }
 
 /* ---------- render ---------- */
 function renderCanvas(){
   const svg = compose(S);
   const ground = S.ground === 'light' ? '#F3F3F3' : '#202020';
   $('canvas').style.background = ground;
-  $('canvas').innerHTML = svg;
+  $('canvas').innerHTML = svg + (S.grid ? gridOverlay() : '');
   $('meta').textContent = slugify(S.name) + '.svg · ' + TOKENS.canvas + ' canvas · ' + (S.layers.length + (S.base?1:0)) + ' layers';
   $('f-slug').textContent = 'Slug: ' + slugify(S.name);
   const sizes = [
@@ -260,12 +294,35 @@ function renderCanvas(){
     ';padding:' + Math.round(s.px*0.07) + 'px">' + svg + '</div><figcaption>' + s.label + '</figcaption></figure>'
   ).join('');
 }
+/* The scaffold the parts were authored on: an 80 canvas with a 64 safe area
+ * and an 8 margin, scaled up to the 512 asset canvas. Off by default, because
+ * it is a measuring tool, not decoration. */
+function gridOverlay(){
+  const K = TOKENS.canvas / TOKENS.partCanvas;          // 80 -> 512
+  const m = TOKENS.margin * K;
+  const safe = TOKENS.safeArea * K;
+  const step = (TOKENS.gridStep || 8) * K;
+  const ink = S.ground === 'light' ? '#2B2E33' : '#EEF2F9';
+  let lines = '';
+  for(let v = step; v < TOKENS.canvas - 0.01; v += step){
+    const t = Math.round(v * 100) / 100;
+    lines += '<line x1="' + t + '" y1="0" x2="' + t + '" y2="' + TOKENS.canvas + '"/>' +
+             '<line x1="0" y1="' + t + '" x2="' + TOKENS.canvas + '" y2="' + t + '"/>';
+  }
+  return '<svg class="grid" viewBox="0 0 ' + TOKENS.canvas + ' ' + TOKENS.canvas + '" fill="none" aria-hidden="true">' +
+    '<g stroke="' + ink + '" stroke-width="1" opacity=".13">' + lines + '</g>' +
+    '<rect x="' + m + '" y="' + m + '" width="' + safe + '" height="' + safe + '" rx="6" ' +
+      'stroke="' + ink + '" stroke-width="2" opacity=".42" stroke-dasharray="10 7"/>' +
+    '<rect x="1" y="1" width="' + (TOKENS.canvas - 2) + '" height="' + (TOKENS.canvas - 2) + '" rx="8" ' +
+      'stroke="' + ink + '" stroke-width="2" opacity=".22"/>' +
+    '</svg>';
+}
 function renderLayers(){
   const row = (L, i, tier) => {
     const on = S.sel === i;
     return '<div class="layer" role="button" tabindex="0" aria-selected="' + on + '" data-i="' + i + '">' +
       '<span class="sw" style="background:' + toneHex(L.tone) + '"></span>' +
-      '<span class="nm">' + L.part.replace(/-/g,' ') + '<em>' + tier + ' · ' + L.tone + '</em></span>' +
+      '<span class="nm">' + L.part.replace(/-/g,' ') + '<em>' + tier + ' · ' + L.tone + (L.size ? ' · ' + L.size : '') + '</em></span>' +
       (i === -1 ? '<span></span>' : '<button class="x" data-del="' + i + '" title="Remove">&times;</button>') +
       '</div>';
   };
@@ -298,9 +355,16 @@ function renderEditor(){
   const placements = ['solo','lead','modifier'];
   const anchors = Object.keys(TOKENS.layout.anchors);
   const fx = Object.keys(TOKENS.elevation);
+  const sizes = sizesFor(isBase ? 'base' : L.tier, L.part);
 
   $('editor').innerHTML =
     '<h3>' + (isBase ? 'Base' : 'Layer') + ' &middot; ' + L.part.replace(/-/g,' ') + '</h3>' +
+    (sizes.length > 1
+      ? '<label class="f"><span>Size</span><div class="seg wide" id="e-size">' +
+          sizes.map(k => '<button data-size="' + k + '" aria-pressed="' + (L.size===k) + '">' +
+            k + '<em>' + TOKENS.size[k] + '</em></button>').join('') +
+        '</div></label>'
+      : '') +
     '<label class="f"><span>Tone family</span><select id="e-fam">' +
       fams.map(f => '<option' + (f===fam?' selected':'') + '>' + f + '</option>').join('') + '</select></label>' +
     '<div class="tones" id="e-steps">' + steps.map(s =>
@@ -326,6 +390,9 @@ function renderEditor(){
   });
   $('e-steps').querySelectorAll('[data-step]').forEach(b =>
     b.addEventListener('click', () => { L.tone = fam + '.' + b.dataset.step; render(); }));
+  const sz = $('e-size');
+  if(sz) sz.querySelectorAll('[data-size]').forEach(b =>
+    b.addEventListener('click', () => { L.size = b.dataset.size; render(); }));
   const pe = $('e-place');
   if(pe) pe.addEventListener('change', () => {
     const v = pe.value;
@@ -347,30 +414,43 @@ function renderEditor(){
 function renderPalette(){
   const tiers = Object.keys(PARTS).filter(t => Object.keys(PARTS[t]).length);
   $('tabs').innerHTML = tiers.map(t =>
-    '<button data-tab="' + t + '" aria-pressed="' + (S.tab===t) + '">' + t + ' (' + Object.keys(PARTS[t]).length + ')</button>').join('');
+    '<button data-tab="' + t + '" aria-pressed="' + (S.tab===t) + '">' + t + ' (' + groupsIn(t).size + ')</button>').join('');
   $('tabs').querySelectorAll('[data-tab]').forEach(b =>
     b.addEventListener('click', () => { S.tab = b.dataset.tab; render(); }));
 
   const list = PARTS[S.tab] || {};
-  $('palette').innerHTML = Object.keys(list).map(slug =>
-    '<button class="chip" data-part="' + slug + '" title="' + slug + '">' +
-    '<svg viewBox="0 0 80 80" fill="none">' + list[slug].body + '</svg>' +
-    '<span>' + slug + '</span></button>').join('');
-  $('palette').querySelectorAll('[data-part]').forEach(b =>
+  const groups = [...groupsIn(S.tab).values()];
+  $('palette').innerHTML = groups.map(g => {
+    const slug = previewSlug(g);
+    const n = Object.keys(g.sizes).length;
+    return '<button class="chip" data-shape="' + g.shape + '" title="' + g.shape + (n > 1 ? ' · ' + n + ' sizes' : '') + '">' +
+      '<svg viewBox="0 0 80 80" fill="none">' + list[slug].body + '</svg>' +
+      '<span>' + g.shape + '</span></button>';
+  }).join('');
+  $('palette').querySelectorAll('[data-shape]').forEach(b =>
     b.addEventListener('click', () => {
-      const slug = b.dataset.part;
-      if(S.tab === 'base'){ S.base = S.base || {}; S.base.part = slug; S.sel = -1; }
-      else {
-        S.layers.push({ tier:S.tab, part:slug, tone:'blue.heavy',
-                        layout: S.layers.length ? 'modifier' : 'solo',
-                        anchor: S.layers.length ? 'br' : undefined,
-                        elevation:['cast'] });
+      const shape = b.dataset.shape;
+      const sizes = sizesFor(S.tab, shape);
+      if(S.tab === 'base'){
+        S.base = S.base || {};
+        S.base.part = shape;
+        // keep the size you were working at if the new shape has it
+        if(sizes.length) S.base.size = sizes.includes(S.base.size) ? S.base.size : sizes[0];
+        else delete S.base.size;
+        S.sel = -1;
+      } else {
+        const L = { tier:S.tab, part:shape, tone:'blue.heavy',
+                    layout: S.layers.length ? 'modifier' : 'solo',
+                    anchor: S.layers.length ? 'br' : undefined,
+                    elevation:['cast'] };
+        if(sizes.length) L.size = sizes[0];
+        S.layers.push(L);
         S.sel = S.layers.length - 1;
       }
       render();
     }));
   $('palhint').textContent = S.tab === 'base'
-    ? 'Picking a base replaces the current one. The base carries the silhouette.'
+    ? 'Picking a base replaces the current one. The base carries the silhouette; set its size in the editor.'
     : 'Picking a shape adds it as a new layer on top.';
 }
 function renderChecks(){
@@ -391,6 +471,11 @@ function render(){ renderCanvas(); renderLayers(); renderEditor(); renderPalette
 
 /* ---------- chrome ---------- */
 $('f-name').addEventListener('input', e => { S.name = e.target.value; renderCanvas(); });
+$('g-grid').addEventListener('click', () => {
+  S.grid = !S.grid;
+  $('g-grid').setAttribute('aria-pressed', S.grid);
+  renderCanvas();
+});
 $('g-light').addEventListener('click', () => { S.ground='light'; setGround(); });
 $('g-dark').addEventListener('click', () => { S.ground='dark'; setGround(); });
 function setGround(){

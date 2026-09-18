@@ -34,6 +34,15 @@ function partBody(tier, slug) {
   return m[1].trim();
 }
 
+// A base shape is named by what it is, not by how big it is: {part:"circle",
+// size:"md"} rather than {part:"circle-48"}. Size is a property of the layer,
+// which is what lets the tool offer a size control instead of three near
+// duplicate entries in the shape palette. Parts without a size (every secondary
+// shape) resolve to their slug unchanged.
+function partSlug(spec) {
+  return spec.size ? `${spec.part}-${spec.size}` : spec.part;
+}
+
 // placement: parts are authored on an 80 canvas, assets on 512.
 // a placement scales about the canvas centre so a shape stays centred as it grows.
 function place(body, { scale = 1, x = 0, y = 0 }, fill) {
@@ -99,9 +108,9 @@ export function checkSurfaces(recipe) {
   if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return [];
   const l = contrast(hex, SURFACES.light), d = contrast(hex, SURFACES.dark);
   const notes = [];
-  if (l < 3 && d < 3) notes.push(`outermost ${outer.part} (${outer.tone}) fails both surfaces: ${l.toFixed(2)} light, ${d.toFixed(2)} dark`);
-  else if (l < 3) notes.push(`outermost ${outer.part} (${outer.tone}) fails on light: ${l.toFixed(2)}. outline it, contain it, or demote it`);
-  else if (d < 3) notes.push(`outermost ${outer.part} (${outer.tone}) fails on dark: ${d.toFixed(2)}. outline it, contain it, or demote it`);
+  if (l < 3 && d < 3) notes.push(`outermost ${partSlug(outer)} (${outer.tone}) fails both surfaces: ${l.toFixed(2)} light, ${d.toFixed(2)} dark`);
+  else if (l < 3) notes.push(`outermost ${partSlug(outer)} (${outer.tone}) fails on light: ${l.toFixed(2)}. outline it, contain it, or demote it`);
+  else if (d < 3) notes.push(`outermost ${partSlug(outer)} (${outer.tone}) fails on dark: ${d.toFixed(2)}. outline it, contain it, or demote it`);
   return notes;
 }
 
@@ -111,13 +120,13 @@ export function compose(recipe) {
 
   const add = (tier, spec, lay) => {
     const fill = tone(spec.tone);
-    let g = place(partBody(tier, spec.part), lay, fill);
+    let g = place(partBody(tier, partSlug(spec)), lay, fill);
     if (spec.elevation) {
       for (const n of [].concat(spec.elevation)) fxUsed.add(n);
       const f = [].concat(spec.elevation).map(n => `url(#fx-${n})`).join(' ');
       g = `<g filter="${f}">${g}</g>`;
     }
-    layers.push(`  <!-- ${tier}: ${spec.part} -->\n  ${g}`);
+    layers.push(`  <!-- ${tier}: ${partSlug(spec)} -->\n  ${g}`);
   };
 
   if (recipe.base) add('base', recipe.base, layoutFor(recipe.base, 0, 1));

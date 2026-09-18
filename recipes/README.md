@@ -15,7 +15,7 @@ node scripts/compose.mjs recipes/*.json --out build
   "slug": "safety-files",
   "concept": "safety",
   "label": "Protected files",
-  "base":      { "part": "rect-64x48", "tone": "blue.loud", "elevation": ["rim"] },
+  "base":      { "part": "rect", "size": "lg", "tone": "blue.loud", "elevation": ["rim"] },
   "secondary": [
     { "part": "folder", "tone": "grey.paper", "scale": 0.66, "elevation": ["cast"] },
     { "part": "shield", "tone": "blue.heavy", "anchor": "br", "elevation": ["cast"] }
@@ -25,7 +25,9 @@ node scripts/compose.mjs recipes/*.json --out build
 
 Every field points at something the system already defines:
 
-- `part` is a file in `parts/<tier>/`
+- `part` is a shape in `parts/<tier>/`
+- `size` is `lg`, `md` or `sm` on a base shape, and resolves to the file
+  `<part>-<size>.svg`. Leave it out for shapes that have only one size
 - `tone` is `family.step` from `schema/tokens.json`, never a hex
 - `elevation` names one of the six recipes, never a shadow value
 - `anchor` and `layout` name a placement, never a coordinate
@@ -52,7 +54,7 @@ at build time:
 
 ```
 composed safety-shield  ->  build/safety-shield.svg
-  ! outermost circle-64 (blue.subtle) fails on light: 1.29.
+  ! outermost circle-lg (blue.subtle) fails on light: 1.29.
     outline it, contain it, or demote it
 ```
 

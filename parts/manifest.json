@@ -3,101 +3,228 @@
   "safeArea": 64,
   "margin": 8,
   "gridStep": 8,
+  "sizes": {
+    "lg": 64,
+    "md": 48,
+    "sm": 32
+  },
   "parts": {
     "base": [
       {
-        "slug": "rect-64x48",
-        "label": "Base rectangle 64x48"
-      },
-      {
-        "slug": "rect-48x48",
-        "label": "Base rectangle 48x48"
-      },
-      {
-        "slug": "rect-56x40",
-        "label": "Base rectangle 56x40"
-      },
-      {
-        "slug": "circle-64",
-        "label": "Base circle large 64"
-      },
-      {
-        "slug": "circle-48",
-        "label": "Base circle medium 48"
-      },
-      {
         "slug": "chat-box",
-        "label": "Base chat box"
+        "label": "Base chat box",
+        "shape": "chat-box",
+        "size": "lg"
       },
       {
-        "slug": "triangle-64",
-        "label": "Base triangle large 64"
+        "slug": "circle-lg",
+        "label": "Base circle large",
+        "shape": "circle",
+        "size": "lg"
+      },
+      {
+        "slug": "circle-md",
+        "label": "Base circle medium",
+        "shape": "circle",
+        "size": "md"
+      },
+      {
+        "slug": "circle-sm",
+        "label": "Base circle small",
+        "shape": "circle",
+        "size": "sm"
+      },
+      {
+        "slug": "diamond-lg",
+        "label": "Base diamond large",
+        "shape": "diamond",
+        "size": "lg"
+      },
+      {
+        "slug": "diamond-md",
+        "label": "Base diamond medium",
+        "shape": "diamond",
+        "size": "md"
+      },
+      {
+        "slug": "diamond-sm",
+        "label": "Base diamond small",
+        "shape": "diamond",
+        "size": "sm"
+      },
+      {
+        "slug": "hexagon-lg",
+        "label": "Base hexagon large",
+        "shape": "hexagon",
+        "size": "lg"
+      },
+      {
+        "slug": "hexagon-md",
+        "label": "Base hexagon medium",
+        "shape": "hexagon",
+        "size": "md"
+      },
+      {
+        "slug": "hexagon-sm",
+        "label": "Base hexagon small",
+        "shape": "hexagon",
+        "size": "sm"
+      },
+      {
+        "slug": "octagon-lg",
+        "label": "Base octagon large",
+        "shape": "octagon",
+        "size": "lg"
+      },
+      {
+        "slug": "octagon-md",
+        "label": "Base octagon medium",
+        "shape": "octagon",
+        "size": "md"
+      },
+      {
+        "slug": "octagon-sm",
+        "label": "Base octagon small",
+        "shape": "octagon",
+        "size": "sm"
+      },
+      {
+        "slug": "pentagon-lg",
+        "label": "Base pentagon large",
+        "shape": "pentagon",
+        "size": "lg"
+      },
+      {
+        "slug": "pentagon-md",
+        "label": "Base pentagon medium",
+        "shape": "pentagon",
+        "size": "md"
+      },
+      {
+        "slug": "pentagon-sm",
+        "label": "Base pentagon small",
+        "shape": "pentagon",
+        "size": "sm"
+      },
+      {
+        "slug": "rect-lg",
+        "label": "Base rectangle large",
+        "shape": "rect",
+        "size": "lg"
+      },
+      {
+        "slug": "rect-md",
+        "label": "Base rectangle medium",
+        "shape": "rect",
+        "size": "md"
+      },
+      {
+        "slug": "rect-sm",
+        "label": "Base rectangle small",
+        "shape": "rect",
+        "size": "sm"
+      },
+      {
+        "slug": "square-lg",
+        "label": "Base square large",
+        "shape": "square",
+        "size": "lg"
+      },
+      {
+        "slug": "square-md",
+        "label": "Base square medium",
+        "shape": "square",
+        "size": "md"
+      },
+      {
+        "slug": "square-sm",
+        "label": "Base square small",
+        "shape": "square",
+        "size": "sm"
+      },
+      {
+        "slug": "triangle-lg",
+        "label": "Base triangle large",
+        "shape": "triangle",
+        "size": "lg"
+      },
+      {
+        "slug": "triangle-md",
+        "label": "Base triangle medium",
+        "shape": "triangle",
+        "size": "md"
+      },
+      {
+        "slug": "triangle-sm",
+        "label": "Base triangle small",
+        "shape": "triangle",
+        "size": "sm"
       }
     ],
     "secondary": [
       {
-        "slug": "cursor",
-        "label": "Cursor"
-      },
-      {
-        "slug": "shield",
-        "label": "Shield"
-      },
-      {
-        "slug": "pin",
-        "label": "Pin"
-      },
-      {
-        "slug": "battery",
-        "label": "Battery"
-      },
-      {
-        "slug": "gear",
-        "label": "Gear"
-      },
-      {
-        "slug": "bell",
-        "label": "Bell"
-      },
-      {
-        "slug": "arrow-up",
-        "label": "Arrow up"
+        "slug": "arched-rect",
+        "label": "Arched rectangle"
       },
       {
         "slug": "arrow-down",
         "label": "Arrow down"
       },
       {
-        "slug": "folder",
-        "label": "Folder"
+        "slug": "arrow-up",
+        "label": "Arrow up"
+      },
+      {
+        "slug": "battery",
+        "label": "Battery"
+      },
+      {
+        "slug": "bell",
+        "label": "Bell"
       },
       {
         "slug": "chat-bubble",
         "label": "Chat bubble"
       },
       {
-        "slug": "ribbon",
-        "label": "Ribbon"
+        "slug": "cuff",
+        "label": "Cuff"
+      },
+      {
+        "slug": "cursor",
+        "label": "Cursor"
       },
       {
         "slug": "document",
         "label": "Document, folded corner"
       },
       {
-        "slug": "ticket",
-        "label": "Ticket"
+        "slug": "folder",
+        "label": "Folder"
       },
       {
-        "slug": "arched-rect",
-        "label": "Arched rectangle"
+        "slug": "gear",
+        "label": "Gear"
       },
       {
-        "slug": "cuff",
-        "label": "Cuff"
+        "slug": "pin",
+        "label": "Pin"
+      },
+      {
+        "slug": "ribbon",
+        "label": "Ribbon"
+      },
+      {
+        "slug": "shield",
+        "label": "Shield"
       },
       {
         "slug": "speaker",
         "label": "Speaker"
+      },
+      {
+        "slug": "ticket",
+        "label": "Ticket"
       }
     ],
     "tertiary": []

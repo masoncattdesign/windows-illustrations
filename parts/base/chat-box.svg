@@ -1,3 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none" role="img" aria-label="Base chat box" data-tier="base" data-slug="chat-box">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none" role="img" aria-label="Base chat box" data-tier="base" data-slug="chat-box" data-shape="chat-box" data-size="lg">
   <path fill="currentColor" data-part="base" d="M67.7333 16C70.0898 16 72 17.7784 72 19.9722C72 22.166 72 53.3644 72 55.9286C72 58.4927 70.0898 60.5714 67.7333 60.5714C65.5498 60.5714 39.8163 60.5714 36.0533 60.5714C35.7432 60.5714 35.4565 60.6603 35.1954 60.8276L26.4964 66.4007C25.4171 67.0921 24 66.3171 24 65.0352V62.193C24 61.2975 23.274 60.5714 22.3784 60.5714H12.2667C9.91025 60.5714 8 58.4927 8 55.9286V19.9722C8 17.7784 9.91025 16 12.2667 16C12.2667 16 65.3769 16 67.7333 16Z"/>
 </svg>
