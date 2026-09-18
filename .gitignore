@@ -66,3 +66,5 @@ Claude outputs/
 
 # generated training corpus, large and rebuildable
 corpus/
+corpus-real/*
+!corpus-real/README.md
