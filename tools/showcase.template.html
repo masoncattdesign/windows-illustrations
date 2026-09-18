@@ -1,0 +1,251 @@
+<title>WDS Illustration System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F7F8FA; --surface:#FFFFFF; --sunk:#EEF1F6;
+  --ink:#181B1F; --ink-2:#45484D; --ink-3:#71757C; --line:#DDE1E8; --line-2:#EAEDF2;
+  --accent:#2561CE; --accent-soft:#E8EFFC;
+  --ok:#2D776E; --ok-bg:#E4F3F0; --warn:#9A4B12; --warn-bg:#FBEDE2;
+  --win-light:#F3F3F3; --win-dark:#202020;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --paper:#111318; --surface:#181B21; --sunk:#1F232A;
+  --ink:#E9ECF2; --ink-2:#B4B9C2; --ink-3:#868C96; --line:#2B303A; --line-2:#22262E;
+  --accent:#7BA5F0; --accent-soft:#1B2740;
+  --ok:#6FC9BC; --ok-bg:#15302C; --warn:#E0A272; --warn-bg:#33231492;
+}}
+:root[data-theme="dark"]{
+  --paper:#111318; --surface:#181B21; --sunk:#1F232A;
+  --ink:#E9ECF2; --ink-2:#B4B9C2; --ink-3:#868C96; --line:#2B303A; --line-2:#22262E;
+  --accent:#7BA5F0; --accent-soft:#1B2740;
+  --ok:#6FC9BC; --ok-bg:#15302C; --warn:#E0A272; --warn-bg:#332314;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+     font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.022em;line-height:1.08}
+h2{font-size:clamp(20px,2.6vw,25px);font-weight:600;letter-spacing:-.014em}
+h3{font-size:15px;font-weight:600;letter-spacing:-.005em}
+p{margin:0}
+.lede{font-size:clamp(16px,2vw,18px);color:var(--ink-2);max-width:62ch}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header.top{border-bottom:1px solid var(--line);background:var(--surface)}
+header.top .wrap{padding-block:44px 38px;display:flex;flex-direction:column;gap:16px}
+.rule-callout{display:flex;flex-wrap:wrap;gap:10px 26px;padding:14px 18px;margin-top:6px;
+  background:var(--sunk);border:1px solid var(--line-2);border-radius:10px;max-width:660px}
+.rule-callout div{display:flex;flex-direction:column;gap:1px}
+.rule-callout b{font-family:var(--mono);font-size:17px;font-weight:500;letter-spacing:-.01em}
+.rule-callout span{font-size:11.5px;color:var(--ink-3)}
+
+section{border-top:1px solid var(--line-2)}
+section:first-of-type{border-top:0}
+section .wrap{padding-block:46px}
+.head{display:flex;flex-direction:column;gap:9px;margin-bottom:26px;max-width:66ch}
+
+/* the thesis: one asset, both Windows surfaces at once */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px}
+.tile{display:flex;flex-direction:column;gap:7px}
+.split{aspect-ratio:1;border-radius:11px;border:1px solid var(--line);overflow:hidden;
+  display:grid;place-items:center;
+  background:linear-gradient(90deg,var(--win-light) 0 50%,var(--win-dark) 50% 100%)}
+.split img{width:78%;height:78%;object-fit:contain;display:block}
+.tile figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.tile .nm{font-size:12.5px;color:var(--ink-2)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 6px;border-radius:99px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
+.tag.mark{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+/* ramp: same asset at the three delivery sizes, true relative scale */
+.ramps{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:20px 16px}
+.ramp{display:flex;flex-direction:column;gap:8px}
+.ramp .row{display:flex;align-items:flex-end;gap:12px;min-height:104px;
+  padding:12px;border-radius:10px;background:var(--win-light);border:1px solid var(--line)}
+.ramp .row img{display:block}
+.ramp .s512{width:96px;height:96px}
+.ramp .s256{width:48px;height:48px}
+.ramp .s64{width:12px;height:12px}
+.ramp .cap{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ramp .cap .nm{font-size:12.5px;color:var(--ink-2)}
+.verdict{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+.verdict.holds{color:var(--ok)} .verdict.fails{color:var(--warn)}
+.scalebar{display:flex;gap:12px;font-family:var(--mono);font-size:10px;color:var(--ink-3);padding-left:12px}
+.scalebar span{width:96px}.scalebar span+span{width:48px}.scalebar span+span+span{width:12px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;background:var(--surface)}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+thead th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.sw{display:inline-block;width:15px;height:15px;border-radius:4px;vertical-align:-3px;margin-right:8px;
+  border:1px solid rgba(0,0,0,.14)}
+.pill{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border-radius:99px}
+.pill.yes{background:var(--ok-bg);color:var(--ok)}
+.pill.no{background:var(--sunk);color:var(--ink-3)}
+.pill.miss{background:var(--warn-bg);color:var(--warn)}
+
+.note{display:flex;gap:11px;padding:14px 16px;border-radius:10px;background:var(--warn-bg);
+  border:1px solid color-mix(in srgb,var(--warn) 22%,transparent);margin-top:18px;max-width:72ch}
+.note b{font-family:var(--display);font-weight:600}
+.note p{font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.note .bar{width:3px;border-radius:2px;background:var(--warn);flex:none}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:12px;padding:5px 11px;border-radius:8px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2)}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:22px}
+.stack{display:flex;flex-direction:column;gap:7px}
+.stack p{font-size:13.5px;color:var(--ink-2)}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+footer .wrap{padding-block:26px 34px;display:flex;flex-wrap:wrap;gap:8px 26px;
+  font-size:12.5px;color:var(--ink-3)}
+@media (max-width:520px){ .ramp .row{min-height:88px} .ramp .s512{width:76px;height:76px} }
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Windows Design Systems</p>
+  <h1>One illustration, two surfaces</h1>
+  <p class="lede">The Windows illustration library is being rebuilt around a single constraint: no light and dark variants. Every asset ships once and has to hold its silhouette on both Windows surfaces. That one rule decides the palette, the elevation, and which shapes are allowed to exist.</p>
+  <div class="rule-callout">
+    <div><b>#F3F3F3</b><span>Windows light surface</span></div>
+    <div><b>#202020</b><span>Windows dark surface</span></div>
+    <div><b>3:1</b><span>minimum on both</span></div>
+    <div><b>16</b><span>assets in the pilot</span></div>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">The pilot set</p>
+    <h2>Every tile is split down the middle</h2>
+    <p class="lede">Left half sits on the Windows light surface, right half on dark. Same asset, no variant. Where an asset holds together across the seam, it passes.</p>
+  </div>
+  <div class="grid" id="assets"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">The delivery ramp</p>
+    <h2>512, 256, 64, at true relative scale</h2>
+    <p class="lede">An illustration that only works big is not finished. Shown here at the three delivery sizes in proportion, so the small end is where problems show rather than where they hide.</p>
+  </div>
+  <div class="scalebar"><span>512</span><span>256</span><span>64</span></div>
+  <div class="ramps" id="ramps" style="margin-top:8px"></div>
+  <div class="note"><div class="bar"></div><div>
+    <b>The ramp found something.</b>
+    <p>The three gradient marks hold their read all the way down. Most of the layered assets do not: the keyboards, both laptops, device sync and the news card collapse into grey mush at 64. Layered planes need pixels to read as layers. Either 64 is not a real delivery size for that treatment, or those assets need a simplified small variant.</p>
+  </div></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Palette</p>
+    <h2>Only one step per family survives both surfaces</h2>
+    <p class="lede">Measured contrast against each Windows surface. A step is usable as the outermost shape only when it clears 3:1 on both, and the dual-safe band turns out to be exactly one step wide.</p>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Token</th><th>Hex</th><th style="text-align:right">On light</th><th style="text-align:right">On dark</th><th>Outermost</th></tr></thead>
+    <tbody id="tone"></tbody>
+  </table></div>
+  <div class="note"><div class="bar"></div><div>
+    <b>The step names do not mean the same thing across families.</b>
+    <p>Blue and purple are dual-safe at <span class="mono">loud</span>. Teal is not: <span class="mono">teal.loud</span> misses on light by 0.11, and teal's safe step is <span class="mono">heavy</span> instead. A designer writing <span class="mono">teal.loud</span> expecting it to behave like <span class="mono">blue.loud</span> gets an asset that disappears on light surfaces. <span class="mono">#359b91</span>, two percent darker, clears at 3.03 and puts the family back in step.</p>
+  </div></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Elevation</p>
+    <h2>Six recipes, distilled from forty-one values</h2>
+    <p class="lede">The Figma file carried 41 distinct effect values across roughly 100 applications. Reading them showed the variation was opacity drift rather than intent, so they collapse to named recipes an asset can only pick from.</p>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Recipe</th><th>Type</th><th>Colour</th><th style="text-align:right">Opacity</th><th style="text-align:right">Y</th><th style="text-align:right">Blur</th></tr></thead>
+    <tbody id="elev"></tbody>
+  </table></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Parts</p>
+    <h2>Shapes are geometry, so they are generated</h2>
+    <p class="lede">Base shapes come out of a generator rather than being drawn, which is what lets size be a property of a layer instead of a different shape. Three sizes fitted by bounding box, so a triangle and a hexagon of the same size look the same size, with the corner radius held constant because that was already the convention in the file.</p>
+  </div>
+  <div class="cols">
+    <div class="stack"><h3>Base shapes</h3><div class="chips" id="shapes"></div>
+      <p>Each at <span class="mono">lg 64</span>, <span class="mono">md 48</span>, <span class="mono">sm 32</span>, being 100%, 75% and 50% of the 64 safe area, all on the 8 grid.</p></div>
+    <div class="stack"><h3>Secondary shapes</h3><div class="chips" id="secondary"></div>
+      <p>Movable and scalable, and constrained to sit inside their base. That containment is checked by rasterising, because a bounding box says a shield fits a triangle when its corners plainly do not.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head">
+    <p class="eyebrow">What comes next</p>
+    <h2>Scaling the library without loosening the rules</h2>
+  </div>
+  <div class="cols">
+    <div class="stack"><h3>Generation</h3><p>The pilot set is packaged as a training corpus: 16 assets at 512 with captions written from the system rather than typed, split into the two treatments the set actually contains so a model can be asked for either. Untrained as of today.</p></div>
+    <div class="stack"><h3>The check stays</h3><p>Whatever generates an asset, it still has to clear 3:1 on both surfaces and hold its read at 64. The measurements on this page are the bar, and they apply to generated output exactly as they apply to drawn output.</p></div>
+    <div class="stack"><h3>The builder</h3><p>A composition tool already reads the same tokens and parts, renders to SVG, and runs the surfaces check live while you work. Recipes are data, so an asset can be diffed, reviewed and rebuilt rather than redrawn.</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>Windows Design Systems illustration library</span>
+  <span class="mono" id="stamp"></span>
+  <span>Internal working document</span>
+</div></footer>
+
+<script>
+/*__DATA__*/
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+const pretty = s => s.replace(/-/g, ' ');
+
+$('assets').innerHTML = ASSETS.map(a =>
+  '<figure class="tile"><div class="split"><img src="' + a.img + '" alt="' + esc(a.caption) + '" loading="lazy"></div>' +
+  '<figcaption><span class="nm">' + pretty(a.slug) + '</span>' +
+  '<span class="tag' + (a.treatment === 'mark' ? ' mark' : '') + '">' + a.treatment + '</span></figcaption></figure>').join('');
+
+// assets whose read survives the bottom of the ramp
+const HOLDS = new Set(['wifi','location-pin','fingerprint','chat-pair','chat-typing','folder-stack','folder-sync']);
+$('ramps').innerHTML = ASSETS.map(a => {
+  const ok = HOLDS.has(a.slug);
+  return '<div class="ramp"><div class="row">' +
+    ['s512','s256','s64'].map(c => '<img class="' + c + '" src="' + a.img + '" alt="" loading="lazy">').join('') +
+    '</div><div class="cap"><span class="nm">' + pretty(a.slug) + '</span>' +
+    '<span class="verdict ' + (ok ? 'holds' : 'fails') + '">' + (ok ? 'holds at 64' : 'lost at 64') + '</span></div></div>';
+}).join('');
+
+$('tone').innerHTML = Object.entries(TONE).flatMap(([fam, steps]) =>
+  Object.entries(steps).map(([step, t]) => {
+    const safe = t.light >= 3 && t.dark >= 3;
+    const near = !safe && Math.max(t.light, t.dark) >= 3 && Math.min(t.light, t.dark) >= 2.7;
+    return '<tr><td><span class="sw" style="background:' + t.hex + '"></span><span class="mono">' + fam + '.' + step + '</span></td>' +
+      '<td class="mono">' + t.hex + '</td>' +
+      '<td class="num">' + t.light.toFixed(2) + '</td><td class="num">' + t.dark.toFixed(2) + '</td>' +
+      '<td><span class="pill ' + (safe ? 'yes' : near ? 'miss' : 'no') + '">' +
+      (safe ? 'yes' : near ? 'just misses' : 'inner only') + '</span></td></tr>';
+  })).join('');
+
+$('elev').innerHTML = Object.entries(ELEVATION).map(([n, e]) =>
+  '<tr><td class="mono">' + n + '</td><td>' + e.type + '</td>' +
+  '<td><span class="sw" style="background:' + e.color + '"></span><span class="mono">' + e.color + '</span></td>' +
+  '<td class="num">' + e.opacity + '</td><td class="num">' + e.dy + '</td><td class="num">' + e.blur + '</td></tr>').join('');
+
+$('shapes').innerHTML = SHAPES.map(s => '<span class="chip">' + s + '</span>').join('');
+$('secondary').innerHTML = SECONDARY.map(s => '<span class="chip">' + s + '</span>').join('');
+$('stamp').textContent = STAMP;
+</script>
