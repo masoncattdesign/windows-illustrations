@@ -13,8 +13,12 @@
 //      model learn both and lets you ask for one at generation time. Leaving it
 //      uncaptioned is how a LoRA averages two looks into neither.
 //
-//   node scripts/corpus-prep.mjs               -> prepared/ at 1024
-//   node scripts/corpus-prep.mjs --size 512
+//   node scripts/corpus-prep.mjs               -> prepared/ at 512
+//   node scripts/corpus-prep.mjs --size 1024
+//
+// 512 is the build size. The library ships three, so every asset also gets a
+// legibility strip at 512 / 256 / 64 in build/ramp-sheet.png: an illustration
+// that only works big is not finished, and the 64 column is where that shows.
 
 import { readdir, mkdir, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
@@ -25,7 +29,8 @@ const sharp = createRequire(import.meta.url)('sharp');
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'corpus-real');
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i > -1 ? process.argv[i + 1] : d; };
-const PX = +arg('size', 1024);
+const PX = +arg('size', 512);
+const RAMP = [512, 256, 64];   // the delivery ramp, mirrored from the builder stage
 const OUT = join(SRC, 'prepared');
 const TRIGGER = 'wdsill';
 
@@ -75,6 +80,33 @@ for (const [file, a] of Object.entries(ASSETS)) {
   n++;
 }
 
+// legibility ramp: each asset at 512 / 256 / 64, drawn at true relative scale
+// (quarter size, so the strip fits) with the small end where problems appear.
+{
+  const K = 0.25, GAP = 8, PAD = 10;
+  const cellW = Math.round(RAMP.reduce((a, b) => a + b * K, 0)) + GAP * RAMP.length + PAD;
+  const cellH = Math.round(RAMP[0] * K) + PAD + 8;
+  const cols = 4, rows = Math.ceil(index.length / cols);
+  const tiles = [];
+  for (let i = 0; i < index.length; i++) {
+    const src = join(OUT, index[i].slug + '.png');
+    let dx = PAD;
+    for (const r of RAMP) {
+      const w = Math.round(r * K);
+      const buf = await sharp(src).resize(w, w).toBuffer();
+      tiles.push({
+        input: buf,
+        left: (i % cols) * cellW + dx,
+        top: Math.floor(i / cols) * cellH + PAD + Math.round(RAMP[0] * K) - w   // bottom aligned
+      });
+      dx += w + GAP;
+    }
+  }
+  await mkdir(join(ROOT, 'build'), { recursive: true });
+  await sharp({ create: { width: cols * cellW, height: rows * cellH, channels: 3, background: '#e8eaee' } })
+    .composite(tiles).png().toFile(join(ROOT, 'build', 'ramp-sheet.png'));
+}
+
 const byT = index.reduce((m, r) => (m[r.treatment] = (m[r.treatment] || 0) + 1, m), {});
 await writeFile(join(OUT, 'index.json'), JSON.stringify({
   generated: new Date().toISOString().slice(0, 10),
@@ -85,5 +117,6 @@ await writeFile(join(OUT, 'index.json'), JSON.stringify({
 console.log(`corpus-prep  ${n} assets -> corpus-real/prepared`);
 console.log(`  ${PX}px, alpha flattened onto white`);
 console.log(`  treatments: ${Object.entries(byT).map(([k, v]) => `${k} ${v}`).join(', ')}`);
+console.log(`  ramp check at ${RAMP.join(' / ')} -> build/ramp-sheet.png`);
 if (missing.length) console.log(`  MISSING, expected but not found: ${missing.join(', ')}`);
 if (unknown.length) console.log(`  UNNAMED, present but not in the map: ${unknown.join(', ')}`);
